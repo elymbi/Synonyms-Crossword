@@ -2,7 +2,7 @@ from crossword3 import *
 
 
 def get_dummy_lines():
-    lines = ["str;in;g1", "s;tring;2", "string3", "string4"]
+    lines = ["str;in;g1", "s;tring;2", "s;tring3", "string4"]
     return lines
 
 
@@ -30,11 +30,12 @@ def parse_file_line(line):
 
 
 def display_all_cluster_properties(all_clusters):
-    [display_cluster_properties(cluster) for cluster in all_clusters]
+    [display_cluster_properties(cluster, all_clusters) for cluster in all_clusters]
 
 
-def display_cluster_properties(cluster):
-    print("new cluster words:", cluster.get_number_words(), "and number of connected clusters:", 0)
+def display_cluster_properties(cluster, all_clusters):
+    print(f"new cluster: {cluster.get_number_words()} words and "
+          f"{cluster.how_many_connected_clusters(all_clusters)} connected clusters")
 
 
 class Cluster:
@@ -48,7 +49,10 @@ class Cluster:
         return "words in this cluster:" + ", ".join(self.words)
 
     def has_common_words(self, other_cluster):
-        return [word for word in other_cluster.words if word in self.words]
+        return len([word for word in other_cluster.words if word in self.words]) > 0
+
+    def how_many_connected_clusters(self, all_clusters):
+        return len([self.has_common_words(cluster) for cluster in all_clusters if self.has_common_words(cluster)]) - 1
 
     def get_number_words(self):
         return len(self.words)
