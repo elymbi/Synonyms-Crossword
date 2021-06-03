@@ -11,9 +11,10 @@ def check_len_file(source_of_lines):
     print(len(lines))
 
     some_lines = get_some_lines(lines, 2)
-    entries = create_entries(some_lines)
-    print("number of entries: ", len(entries))
-    print("display entries:\n" + '\n'.join([entry.get_entry_description() for entry in entries]))
+    clusters = create_entries(lines)
+    # print("number of clusters: ", len(clusters))
+    # print("display clusters:\n" + '\n'.join([entry.get_entry_description() for entry in clusters]))
+    display_all_cluster_properties(clusters)
 
 
 def get_some_lines(lines, number_of_entries):
@@ -26,6 +27,14 @@ def create_entries(lines):
 
 def parse_file_line(line):
     return line.split(";")
+
+
+def display_all_cluster_properties(all_clusters):
+    [display_cluster_properties(cluster) for cluster in all_clusters]
+
+
+def display_cluster_properties(cluster):
+    print("new cluster words:", cluster.get_number_words(), "and number of connected clusters:", 0)
 
 
 class Cluster:
@@ -41,7 +50,8 @@ class Cluster:
     def has_common_words(self, other_cluster):
         return [word for word in other_cluster.words if word in self.words]
 
-
+    def get_number_words(self):
+        return len(self.words)
 
 
 if __name__ == '__main__':
