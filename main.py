@@ -4,7 +4,8 @@ from crossword3 import *
 
 
 def get_dummy_lines():
-    lines = ["str;in;g1", "s;tring;2", "s;tring3", "string4"]
+    # lines = ["str;in;g1", "s;tring;2", "s;tring3", "string4"]
+    lines = ["st;ring", "str;ing", "str;ing", "strin;g", "s;trin;g", "s;tring"]
     return lines
 
 
@@ -14,9 +15,13 @@ def check_len_file(source_of_lines):
 
     some_lines = get_some_lines(lines, 2)
     clusters = create_entries(lines)
+    thesaurus = Thesaurus(clusters)
     # print("number of clusters: ", len(clusters))
     # print("display clusters:\n" + '\n'.join([entry.get_entry_description() for entry in clusters]))
-    display_all_cluster_properties(clusters)
+    # display_all_cluster_properties(clusters)
+    cluster_unions = divide_all_clusters_into_unions(thesaurus)
+    # display_unions(cluster_unions)
+    print("num unions:", len(cluster_unions))
 
 
 def get_some_lines(lines, number_of_entries):
@@ -32,7 +37,11 @@ def parse_file_line(line):
 
 
 def display_all_cluster_properties(all_clusters):
-    all_props = [calculate_cluster_properties(cluster, all_clusters) for cluster in all_clusters]
+    # for cluster in all_clusters:
+    #    prop = calculate_cluster_properties(cluster, all_clusters)
+    #    print_cluster_properties(prop)
+
+    all_props = (calculate_cluster_properties(cluster, all_clusters) for cluster in all_clusters)
 
     for prop in all_props:
         print_cluster_properties(prop)
@@ -56,6 +65,48 @@ def print_cluster_properties(props):
           f"{props.num_matching_clusters} connected clusters")
 
 
+def divide_all_clusters_into_unions(thesaurus):
+    all_unions = []
+    # return uniouns
+    while not thesaurus.is_empty():
+        cluster = thesaurus.eject_cluster()
+        sort_cluster(cluster, all_unions)
+    return all_unions
+
+
+def sort_cluster(cluster, all_unions):
+    try:
+        union_for_cluster = next(union for union in all_unions if union.matches_cluster(cluster))
+        union_for_cluster.add_cluster(cluster)
+    except:
+        new_union = ClusterUnion()
+        new_union.add_cluster(cluster)
+        all_unions.append(new_union)
+
+
+class Thesaurus:
+    def __init__(self, all_clusters):
+        # parse the line and turn it into the data
+        self.all_clusters = all_clusters
+
+    def eject_cluster(self):
+        return self.all_clusters.pop(0)
+
+    def is_empty(self):
+        return len(self.all_clusters) == 0
+
+
+class ClusterUnion:
+    def __init__(self):
+        self.clusters = []
+
+    def add_cluster(self, cluster):
+        self.clusters.append(cluster)
+
+    def matches_cluster(self, cluster):
+        return next((True for c in self.clusters if c.has_common_words(cluster)), False)
+
+
 class Cluster:
     def __init__(self, words):
         # parse the line and turn it into the data
@@ -74,5 +125,5 @@ class Cluster:
 
 
 if __name__ == '__main__':
-    #check_len_file(get_file_lines)
+    # check_len_file(get_file_lines)
     check_len_file(get_dummy_lines)
