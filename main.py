@@ -13,7 +13,7 @@ def check_len_file(source_of_lines):
     some_lines = get_some_lines(lines, 2)
     entries = create_entries(some_lines)
     print("number of entries: ", len(entries))
-    print("display entries:", [entry.words for entry in entries])
+    print("display entries:\n" + '\n'.join([entry.get_entry_description() for entry in entries]))
 
 
 def get_some_lines(lines, number_of_entries):
@@ -21,17 +21,22 @@ def get_some_lines(lines, number_of_entries):
 
 
 def create_entries(lines):
-    return [Entry(parse_file_line(line)) for line in lines]
+    return [Cluster(parse_file_line(line)) for line in lines]
 
 
 def parse_file_line(line):
     return line.split(";")
 
 
-class Entry:
+class Cluster:
     def __init__(self, words):
         # parse the line and turn it into the data
         self.words = words
+
+    def get_entry_description(self):
+        # in other language it's possible to restrict direct access to the object's attributes
+        # and do it through such a method instead
+        return "words in this cluster:"  + ", ".join(self.words)
 
 
 if __name__ == '__main__':
