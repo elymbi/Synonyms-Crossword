@@ -1,10 +1,7 @@
 import random
 import numpy as np
 
-file = open("/Users/ellie/Downloads/OpenThesaurus-Textversion/openthesaurus.txt","r+")
-file = file.read().splitlines()
-#for line in file:
-#    print(line)
+
 
 def getword():
     i = random.randint(0,len(file))
@@ -65,8 +62,6 @@ def answer(array, keyword):
     for i in range(len(keyword)):
         print(" ".join(array[i]))
 
-theanswer = [[], ""]
-
 def makearray(crossword):
     keyword = crossword[0]
     words = crossword[1]
@@ -106,4 +101,17 @@ def spiel():
         answer(theanswer[0], theanswer[1])
         if input("nochmal? ") == "y":
             spiel()
-spiel()
+
+
+def get_file_lines():
+    f = open("/Users/ellie/Downloads/OpenThesaurus-Textversion/openthesaurus.txt", "r+")
+    f = f.read().splitlines()
+    return f
+
+
+if __name__ == '__main__':
+    file = get_file_lines()
+    # for line in file:
+    #    print(line)
+    theanswer = [[], ""]
+    spiel()
