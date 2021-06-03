@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 from crossword3 import *
 
 
@@ -30,12 +32,28 @@ def parse_file_line(line):
 
 
 def display_all_cluster_properties(all_clusters):
-    [display_cluster_properties(cluster, all_clusters) for cluster in all_clusters]
+    all_props = [calculate_cluster_properties(cluster, all_clusters) for cluster in all_clusters]
+
+    for prop in all_props:
+        print_cluster_properties(prop)
 
 
-def display_cluster_properties(cluster, all_clusters):
-    print(f"new cluster: {cluster.get_number_words()} words and "
-          f"{cluster.how_many_connected_clusters(all_clusters)} connected clusters")
+def calculate_cluster_properties(cluster, all_clusters):
+    num_matching = get_num_connected_clusters(cluster, all_clusters)
+    num_words = cluster.get_number_words()
+    return ClusterProperties(num_words, num_matching)
+
+
+def get_num_connected_clusters(cluster, all_clusters):
+    return sum(cluster.has_common_words(c) for c in all_clusters) - 1
+
+
+ClusterProperties = namedtuple("ClusterProperties", "num_words num_matching_clusters")
+
+
+def print_cluster_properties(props):
+    print(f"new cluster: {props.num_words} words and "
+          f"{props.num_matching_clusters} connected clusters")
 
 
 class Cluster:
@@ -51,13 +69,10 @@ class Cluster:
     def has_common_words(self, other_cluster):
         return len([word for word in other_cluster.words if word in self.words]) > 0
 
-    def how_many_connected_clusters(self, all_clusters):
-        return len([self.has_common_words(cluster) for cluster in all_clusters if self.has_common_words(cluster)]) - 1
-
     def get_number_words(self):
         return len(self.words)
 
 
 if __name__ == '__main__':
-    # check_len_file(get_file_lines)
+    #check_len_file(get_file_lines)
     check_len_file(get_dummy_lines)

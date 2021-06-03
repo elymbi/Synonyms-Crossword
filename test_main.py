@@ -17,9 +17,9 @@ class TestCluster(TestCase):
     def test_how_many_connected_clusters(self):
         cluster1 = Cluster(["a", "b", "c", "d", "e", "f"])
         cluster2 = Cluster(["ab", "bb", "cb", "db", "b", "fb"])
-        self.assertEqual(1,cluster1.how_many_connected_clusters([cluster1,cluster2]))
+        self.assertEqual(1, get_num_connected_clusters(cluster1, [cluster1, cluster2]))
 
     def test_no_connected_clusters(self):
         cluster1 = Cluster(["a", "b", "c", "d", "e", "f"])
         cluster2 = Cluster(["ab", "bb", "cb", "db", "bb", "fb"])
-        self.assertEqual(0,cluster1.how_many_connected_clusters([cluster1,cluster2]))
+        self.assertEqual(0, get_num_connected_clusters(cluster1, [cluster1, cluster2]))
