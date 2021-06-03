@@ -20,8 +20,17 @@ def check_len_file(source_of_lines):
     # print("display clusters:\n" + '\n'.join([entry.get_entry_description() for entry in clusters]))
     # display_all_cluster_properties(clusters)
     cluster_unions = divide_all_clusters_into_unions(thesaurus)
+
     # display_unions(cluster_unions)
-    print("num unions:", len(cluster_unions))
+    # print("num unions:", len(cluster_unions))
+    # print("num clusters:",len(clusters))
+    filtered_clusters = filter_unions_by_num_clusters(cluster_unions, 4)
+    print("num unions with over 3 clusters:",len(filtered_clusters))
+
+
+def filter_unions_by_num_clusters(cluster_unions,num):
+    return [u for u in cluster_unions if u.get_num_clusters() >= num]
+
 
 
 def get_some_lines(lines, number_of_entries):
@@ -68,7 +77,10 @@ def print_cluster_properties(props):
 def divide_all_clusters_into_unions(thesaurus):
     all_unions = []
     # return uniouns
-    while not thesaurus.is_empty():
+    while not thesaurus.is_empty() and len(all_unions) < 2000:
+        len_thes = len(thesaurus.all_clusters)
+        len_unions = len(all_unions)
+        print("remaining words:",len_thes,";num unions:",len_unions,";total:",len_thes+len_unions)
         cluster = thesaurus.eject_cluster()
         sort_cluster(cluster, all_unions)
     return all_unions
@@ -87,7 +99,7 @@ def sort_cluster(cluster, all_unions):
 class Thesaurus:
     def __init__(self, all_clusters):
         # parse the line and turn it into the data
-        self.all_clusters = all_clusters
+        self.all_clusters = all_clusters[:]
 
     def eject_cluster(self):
         return self.all_clusters.pop(0)
@@ -99,6 +111,9 @@ class Thesaurus:
 class ClusterUnion:
     def __init__(self):
         self.clusters = []
+
+    def get_num_clusters(self):
+        return len(self.clusters)
 
     def add_cluster(self, cluster):
         self.clusters.append(cluster)
@@ -125,5 +140,5 @@ class Cluster:
 
 
 if __name__ == '__main__':
-    # check_len_file(get_file_lines)
-    check_len_file(get_dummy_lines)
+    check_len_file(get_file_lines)
+    #check_len_file(get_dummy_lines)
