@@ -1,4 +1,7 @@
 from collections import namedtuple
+import sample_union
+from cluster import *
+from union import *
 
 from crossword3 import *
 
@@ -23,8 +26,8 @@ def check_len_file(source_of_lines):
 
     # print("num unions:", len(cluster_unions))
     # print("num clusters:",len(clusters))
-    filtered_clusters = filter_unions_by_num_clusters(cluster_unions, 4)
-    print("num unions with over 3 clusters:", len(filtered_clusters))
+    filtered_clusters = filter_unions_by_num_clusters(cluster_unions, 10)
+    print("num unions with over 10 clusters:", len(filtered_clusters))
     display_unions(filtered_clusters)
 
 
@@ -81,7 +84,7 @@ def print_cluster_properties(props):
 def divide_all_clusters_into_unions(thesaurus):
     all_unions = []
     # return uniouns
-    while not thesaurus.is_empty() and len(all_unions) < 2000:
+    while not thesaurus.is_empty() and len(all_unions) < 10000:
         len_thes = len(thesaurus.all_clusters)
         len_unions = len(all_unions)
         print("remaining words:", len_thes, ";num unions:", len_unions, ";total:", len_thes + len_unions)
@@ -112,40 +115,11 @@ class Thesaurus:
         return len(self.all_clusters) == 0
 
 
-class ClusterUnion:
-    def __init__(self):
-        self.clusters = []
-
-    def get_num_clusters(self):
-        return len(self.clusters)
-
-    def add_cluster(self, cluster):
-        self.clusters.append(cluster)
-
-    def matches_cluster(self, cluster):
-        return next((True for c in self.clusters if c.has_common_words(cluster)), False)
-
-    def get_union_description(self):
-        return "NEW UNION:\n" + '\n'.join([('*' + cluster.get_entry_description()) for cluster in self.clusters])
-
-
-class Cluster:
-    def __init__(self, words):
-        # parse the line and turn it into the data
-        self.words = words
-
-    def get_entry_description(self):
-        # in other language it's possible to restrict direct access to the object's attributes
-        # and do it through such a method instead
-        return "words in this cluster:" + ", ".join(self.words)
-
-    def has_common_words(self, other_cluster):
-        return len([word for word in other_cluster.words if word in self.words]) > 0
-
-    def get_number_words(self):
-        return len(self.words)
+def experiment_union(union):
+    print(union.get_union_description())
 
 
 if __name__ == '__main__':
-    check_len_file(get_file_lines)
+    # check_len_file(get_file_lines)
     # check_len_file(get_dummy_lines)
+    experiment_union(sample_union.make_one_union())
